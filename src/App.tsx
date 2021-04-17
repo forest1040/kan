@@ -49,7 +49,7 @@ const App: React.FC = () => {
     <MuiThemeProvider theme={theme}>
       <Router>
         <Switch>
-          <Route path="/" component={Board} />
+          <Route path="/" exact component={Board} />
           <Route path="/edit" component={TextEdit} />
           <Redirect to="/" />
         </Switch>
