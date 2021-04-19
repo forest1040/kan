@@ -15,7 +15,6 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import { listState, cardState, CardTable } from "../state/model";
 
 interface Props {
-  boardId: number;
   listId: number;
   listIndex: number;
 }
@@ -47,7 +46,7 @@ const List: React.FC<Props> = (props) => {
 
   const history = useHistory();
 
-  const { boardId, listId, listIndex } = props;
+  const { listId, listIndex } = props;
 
   const [lists, setLists] = useRecoilState(listState);
   const [cards, setCards] = useRecoilState(cardState);
@@ -59,7 +58,7 @@ const List: React.FC<Props> = (props) => {
   //   }
   // }, [cards]);
 
-  const OnCardAdded = (boardId: number, listId: number) => {
+  const OnCardAdded = (listId: number) => {
     const id = cards.length + 1;
     // const newCards = cards
     //   .filter((card) => card.listId === listId)
@@ -93,7 +92,7 @@ const List: React.FC<Props> = (props) => {
     ]);
   };
 
-  const OnListDeleted = (boardId: number, listId: number) => {
+  const OnListDeleted = (listId: number) => {
     const cardPromiseArray: Promise<void>[] = [];
     const newCards = cards.filter((card) => card.listId !== listId);
     setCards(newCards);
@@ -102,7 +101,7 @@ const List: React.FC<Props> = (props) => {
   };
 
   const onAddButtonClicked = () => {
-    OnCardAdded(boardId, listId);
+    OnCardAdded(listId);
   };
 
   const onEditButtonClicked = () => {
@@ -110,7 +109,7 @@ const List: React.FC<Props> = (props) => {
   };
 
   const onDeleteButtonClicked = () => {
-    OnListDeleted(boardId, listId);
+    OnListDeleted(listId);
   };
 
   const RenderCards = () => {
@@ -124,7 +123,6 @@ const List: React.FC<Props> = (props) => {
         return (
           <Card
             key={card.id}
-            boardId={boardId}
             cardId={card.id}
             cardIndex={cardIndex}
             onClicked={setIsDragDisabled}
@@ -147,7 +145,7 @@ const List: React.FC<Props> = (props) => {
           innerRef={provided.innerRef}
           className={classes.paper}
         >
-          <ListTitleArea boardId={boardId} listId={listId} />
+          <ListTitleArea listId={listId} />
           <Droppable droppableId={`listId-${listId}`} type="Card">
             {(cardProvided) => (
               <div

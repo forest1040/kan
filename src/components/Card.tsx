@@ -19,7 +19,6 @@ import { useRecoilState } from "recoil";
 import { cardState } from "../state/model";
 
 interface Props {
-  boardId: number;
   cardId: number;
   cardIndex: number;
   onClicked: React.Dispatch<React.SetStateAction<boolean>>;
@@ -65,7 +64,7 @@ const useStyles = makeStyles((theme: Theme) => {
 });
 
 const Card: React.FC<Props> = (props) => {
-  const { boardId, cardId, cardIndex } = props;
+  const { cardId, cardIndex } = props;
   const classes = useStyles();
   const [isInputArea, setIsInputArea] = useState(false);
   const [cards, setCards] = useRecoilState(cardState);
@@ -79,12 +78,12 @@ const Card: React.FC<Props> = (props) => {
     onClicked(isInputArea);
   }, [isInputArea]);
 
-  const onCardDeleted = (boardId: number, cardId: number) => {
+  const onCardDeleted = (cardId: number) => {
     const newCards = cards.filter((card) => card.id !== cardId);
     setCards(newCards);
   };
 
-  const onCardTextChanged = (boardId: number, cardId: number, text: string) => {
+  const onCardTextChanged = (cardId: number, text: string) => {
     if (card) {
       setCards(
         cards.map((c) => (c.id === cardId ? { ...card, text: text } : c))
@@ -94,7 +93,7 @@ const Card: React.FC<Props> = (props) => {
 
   const handleIsInputAreaChange = () => {
     if (isInputArea) {
-      onCardTextChanged(boardId, cardId, text);
+      onCardTextChanged(cardId, text);
     }
     setIsInputArea(!isInputArea);
   };
@@ -104,7 +103,7 @@ const Card: React.FC<Props> = (props) => {
   };
 
   const handleDeleteButtonClicked = () => {
-    onCardDeleted(boardId, cardId);
+    onCardDeleted(cardId);
   };
 
   return (
@@ -116,6 +115,8 @@ const Card: React.FC<Props> = (props) => {
             label="Standard"
             value={text}
             onChange={(event) => handleValueChanged(event.target.value)}
+            multiline
+            rows={3}
           />
           <div className={classes.styledButtonArea}>
             <Fab

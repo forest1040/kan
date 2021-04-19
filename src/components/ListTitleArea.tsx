@@ -9,7 +9,6 @@ import { useRecoilState } from "recoil";
 import { listState } from "../state/model";
 
 interface Props {
-  boardId: number;
   listId: number;
 }
 
@@ -49,7 +48,7 @@ const useStyles = makeStyles(() => {
 });
 
 const ListTitleArea: React.FC<Props> = (props) => {
-  const { boardId, listId } = props;
+  const { listId } = props;
   const classes = useStyles();
 
   const [isInputArea, setIsInputArea] = useState(false);
@@ -59,7 +58,7 @@ const ListTitleArea: React.FC<Props> = (props) => {
   const ListTitle = list?.title || "";
   const [title, setTitle] = useState(ListTitle);
 
-  const onListTitleChanged = (boardId: number, listId: number) => {
+  const onListTitleChanged = () => {
     if (list) {
       setLists(
         lists.map((l) => (l.id === list.id ? { ...list, title: title } : l))
@@ -68,7 +67,7 @@ const ListTitleArea: React.FC<Props> = (props) => {
   };
 
   const handleisInputAreaChange = () => {
-    onListTitleChanged(boardId, listId);
+    onListTitleChanged();
     setIsInputArea(!isInputArea);
   };
 

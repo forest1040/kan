@@ -23,44 +23,48 @@ const useStyles = makeStyles((theme: Theme) => {
   });
 });
 
-// TODO: boardIdの採番
-const boardId = 1;
+interface Props {
+  viewId: number;
+}
 
 const BoardContent: React.FC = () => {
   const [lists, setLists] = useRecoilState(listState);
   const [cards, setCards] = useRecoilState(cardState);
 
-  const boardIdNumber = () => {
-    return parseInt("" + boardId, 10);
-  };
+  // TODO: boardIdの採番
+  const viewId = 1;
+  // const viewIdNumber = () => {
+  //   return viewId;
+  // };
 
   const classes = useStyles();
   const handleAddButtonClicked = useRecoilCallback(
     ({ snapshot }) => async () => {
       const lists = await snapshot.getPromise(listState);
-      onListAdded(boardIdNumber(), lists);
+      onListAdded(viewId, lists);
     }
   );
 
-  const onListAdded = (boardId: number, lists: Lists) => {
+  const onListAdded = (viewId: number, lists: Lists) => {
     const id = lists.length + 1;
-    const index = lists.filter((list) => list.boardId === boardId).length;
+    const index = lists.filter((list) => list.viewId === viewId).length;
     setLists((prevState) => [
       ...prevState,
       {
         id: id,
-        boardId: boardId,
+        viewId: viewId,
         index: index,
         title: "",
+        tag: "",
       },
     ]);
   };
 
   const handleDragEnded = (result: DropResult) => {
-    onDragEnded(boardIdNumber(), result);
+    onDragEnded(viewId, result);
   };
 
-  const onDragEnded = (boardId: number, dropResult: DropResult) => {
+  const onDragEnded = (viewId: number, dropResult: DropResult) => {
     const { destination, draggableId, source, type } = dropResult;
 
     if (destination === undefined || !destination) {
@@ -77,7 +81,7 @@ const BoardContent: React.FC = () => {
     switch (type) {
       case "List": {
         const dragListId = parseInt(draggableId.replace("listId-", ""), 10);
-        SwapLists(boardId, dragListId, source.index, destination.index);
+        SwapLists(dragListId, source.index, destination.index);
         break;
       }
       case "Card": {
@@ -91,7 +95,6 @@ const BoardContent: React.FC = () => {
           10
         );
         swapCards(
-          boardId,
           dragCardtId,
           sourceId,
           source.index,
@@ -106,7 +109,6 @@ const BoardContent: React.FC = () => {
   };
 
   const SwapLists = (
-    boardId: number,
     draglistId: number,
     sourceIndex: number,
     destinationIndex: number
@@ -114,7 +116,7 @@ const BoardContent: React.FC = () => {
     const lowerIndex = Math.min(sourceIndex, destinationIndex);
     const upperIndex = Math.max(sourceIndex, destinationIndex);
     const sourceList = lists
-      .filter((list) => list.boardId === boardId)
+      .filter((list) => list.viewId === viewId)
       .sort((a, b) => a.index - b.index);
     const targetList = sourceList.slice(lowerIndex, upperIndex + 1);
     const lowerList = sourceList.slice(0, lowerIndex);
@@ -137,7 +139,6 @@ const BoardContent: React.FC = () => {
   };
 
   const SwapCardsInTheSameList = (
-    boardId: number,
     dragCardtId: number,
     sourceIndex: number,
     destinationId: number,
@@ -176,7 +177,6 @@ const BoardContent: React.FC = () => {
   };
 
   const SwapCardsInDifferentList = (
-    boardId: number,
     dragCardtId: number,
     sourceListId: number,
     sourceIndex: number,
@@ -223,7 +223,6 @@ const BoardContent: React.FC = () => {
   };
 
   const swapCards = (
-    boardId: number,
     dragCardtId: number,
     sourceId: number,
     sourceIndex: number,
@@ -232,7 +231,6 @@ const BoardContent: React.FC = () => {
   ) => {
     if (sourceId === destinationId) {
       SwapCardsInTheSameList(
-        boardId,
         dragCardtId,
         sourceIndex,
         destinationId,
@@ -240,7 +238,6 @@ const BoardContent: React.FC = () => {
       );
     } else {
       SwapCardsInDifferentList(
-        boardId,
         dragCardtId,
         sourceId,
         sourceIndex,
@@ -251,9 +248,9 @@ const BoardContent: React.FC = () => {
   };
 
   const RenderLists = () => {
-    const id = boardIdNumber();
+    const id = viewId;
     const result = lists
-      .filter((list) => list.boardId === id)
+      .filter((list) => list.viewId === id)
       .sort((a, b) => a.index - b.index)
       .map((list, listIndex) => {
         console.log("list.id:" + list.id);
@@ -261,14 +258,7 @@ const BoardContent: React.FC = () => {
         if (!list.id) {
           return <></>;
         }
-        return (
-          <List
-            key={list.id}
-            boardId={id}
-            listId={list.id}
-            listIndex={listIndex}
-          />
-        );
+        return <List key={list.id} listId={list.id} listIndex={listIndex} />;
       });
     return result;
   };
@@ -276,11 +266,7 @@ const BoardContent: React.FC = () => {
   return (
     <div className={classes.dragDropRoot}>
       <DragDropContext onDragEnd={handleDragEnded}>
-        <Droppable
-          droppableId={`${boardId}`}
-          direction="horizontal"
-          type="List"
-        >
+        <Droppable droppableId={`${viewId}`} direction="horizontal" type="List">
           {(provided) => (
             <div
               className={classes.container}
