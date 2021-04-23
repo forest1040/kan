@@ -4,7 +4,7 @@ import { Draggable, Droppable } from "react-beautiful-dnd";
 import { grey } from "@material-ui/core/colors";
 import Paper from "@material-ui/core/Paper";
 import Fab from "@material-ui/core/Fab";
-import { createStyles, makeStyles } from "@material-ui/core/styles";
+import { css } from "@emotion/react";
 import AddIcon from "@material-ui/icons/Add";
 import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
@@ -19,35 +19,10 @@ interface Props {
   listIndex: number;
 }
 
-const useStyles = makeStyles(() => {
-  return createStyles({
-    paper: {
-      backgroundColor: "#fff",
-      flex: "0 0 400px",
-      width: "400px",
-      height: "fit-content",
-      margin: "16px",
-    },
-    container: {
-      paddingBottom: "5px",
-    },
-    buttonArea: {
-      display: "flex",
-      justifyContent: "space-around",
-      //marginTop: "4px",
-      marginBottom: "10px",
-    },
-  });
-});
-
 const List: React.FC<Props> = (props) => {
   const isInitialMount = useRef(true);
-  const classes = useStyles();
-
   const history = useHistory();
-
   const { listId, listIndex } = props;
-
   const [lists, setLists] = useRecoilState(listState);
   const [cards, setCards] = useRecoilState(cardState);
   const [isDragDisabled, setIsDragDisabled] = useState(false);
@@ -60,26 +35,6 @@ const List: React.FC<Props> = (props) => {
 
   const OnCardAdded = (listId: number) => {
     const id = cards.length + 1;
-    // const newCards = cards
-    //   .filter((card) => card.listId === listId)
-    //   .map((card) => {
-    //     return {
-    //       id: card.id,
-    //       // indexを増やす
-    //       index: card.index + 1,
-    //       listId: card.listId,
-    //       text: card.text,
-    //     };
-    //   });
-    // setCards([
-    //   ...newCards,
-    //   {
-    //     id,
-    //     listId,
-    //     index: 0,
-    //     text: "",
-    //   },
-    // ]);
     const index = cards.filter((card) => card.listId === listId).length;
     setCards((prevState) => [
       ...prevState,
@@ -143,13 +98,13 @@ const List: React.FC<Props> = (props) => {
           {...provided.draggableProps}
           {...provided.dragHandleProps}
           innerRef={provided.innerRef}
-          className={classes.paper}
+          css={paper}
         >
           <ListTitleArea listId={listId} />
           <Droppable droppableId={`listId-${listId}`} type="Card">
             {(cardProvided) => (
               <div
-                className={classes.container}
+                css={container}
                 {...cardProvided.droppableProps}
                 ref={cardProvided.innerRef}
               >
@@ -158,7 +113,7 @@ const List: React.FC<Props> = (props) => {
               </div>
             )}
           </Droppable>
-          <div className={classes.buttonArea}>
+          <div css={buttonArea}>
             <Fab
               variant="extended"
               size="medium"
@@ -192,5 +147,22 @@ const List: React.FC<Props> = (props) => {
     </Draggable>
   );
 };
+
+const paper = css`
+  backgroundcolor: #fff;
+  flex: 0 0 400px;
+  width: 400px;
+  height: fit-content;
+  margin: 16px;
+`;
+const container = css`
+  paddingbottom: 5px;
+`;
+const buttonArea = css`
+  display: flex;
+  justify-content: space-around;
+  margin-top: 4px;
+  margin-bottom: 10px;
+`;
 
 export default List;

@@ -9,7 +9,7 @@ import MaterialCard from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import { grey } from "@material-ui/core/colors";
 import Fab from "@material-ui/core/Fab";
-import { createStyles, Theme, makeStyles } from "@material-ui/core/styles";
+import { css } from "@emotion/react";
 import CheckIcon from "@material-ui/icons/Check";
 import DeleteIcon from "@material-ui/icons/Delete";
 //import "highlight.js/styles/default.css";
@@ -24,48 +24,8 @@ interface Props {
   onClicked: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-// const processor = unified()
-//   .use(parse2Markdown)
-//   .use(remark2rehype)
-//   .use(highlight)
-//   .use(rehype2react, { createElement: React.createElement });
-
-const useStyles = makeStyles((theme: Theme) => {
-  return createStyles({
-    root: {
-      position: "absolute",
-      top: 0,
-      left: 0,
-      width: "100%",
-      height: "100%",
-      //zIndex: theme.zIndex.drawer + 1,
-    },
-    card: {
-      backgroundColor: "#fff",
-      padding: "0px",
-      margin: "8px 16px",
-    },
-    cardContent: {
-      width: "100%",
-      minHeight: "72px",
-      whiteSpace: "pre-line",
-    },
-    toolbar: {
-      marginBottom: "16px",
-      ...theme.mixins.toolbar,
-    },
-    styledButtonArea: {
-      display: "flex",
-      justifyContent: "space-around",
-      marginTop: "16px",
-      marginBottom: "16px",
-    },
-  });
-});
-
 const Card: React.FC<Props> = (props) => {
   const { cardId, cardIndex } = props;
-  const classes = useStyles();
   const [isInputArea, setIsInputArea] = useState(false);
   const [cards, setCards] = useRecoilState(cardState);
   const card = cards.find((cardData) => cardData.id === cardId);
@@ -118,7 +78,7 @@ const Card: React.FC<Props> = (props) => {
             multiline
             rows={3}
           />
-          <div className={classes.styledButtonArea}>
+          <div css={styledButtonArea}>
             <Fab
               variant="extended"
               size="medium"
@@ -146,13 +106,10 @@ const Card: React.FC<Props> = (props) => {
               {...provided.draggableProps}
               {...provided.dragHandleProps}
               ref={provided.innerRef}
-              className={classes.card}
+              css={cardStyle}
             >
               <CardContent>
-                <div
-                  className={classes.cardContent}
-                  onClick={handleIsInputAreaChange}
-                >
+                <div css={cardContent} onClick={handleIsInputAreaChange}>
                   {/* {processor.processSync(text).contents} */}
                   {/* text */}
                   {text}
@@ -165,5 +122,30 @@ const Card: React.FC<Props> = (props) => {
     </>
   );
 };
+
+const root = css`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  //zIndex: theme.zIndex.drawer + 1,
+`;
+const cardStyle = css`
+  backgroundcolor: #fff;
+  padding: 0px;
+  margin: 8px 16px;
+`;
+const cardContent = css`
+  width: 100%;
+  min-height: 72px;
+  white-space: pre-line;
+`;
+const styledButtonArea = css`
+  display: flex;
+  justify-content: space-around;
+  margin-top: 16px;
+  margin-bottom: 16px;
+`;
 
 export default Card;

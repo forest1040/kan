@@ -1,27 +1,12 @@
 import React, { useState } from "react";
 import { Fab } from "@material-ui/core";
-import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
+import { css } from "@emotion/react";
 import AddIcon from "@material-ui/icons/Add";
 import { useRecoilState, useRecoilCallback } from "recoil";
 import { DragDropContext, DropResult, Droppable } from "react-beautiful-dnd";
 import List from "./List";
 import { listState, cardState } from "../state/model";
 import { Lists, Cards } from "../state/model";
-
-const useStyles = makeStyles((theme: Theme) => {
-  return createStyles({
-    dragDropRoot: {
-      display: "flex",
-    },
-    container: {
-      display: "flex",
-    },
-    addbuttonArea: {
-      flex: "0 0 360px",
-      marginTop: "32px",
-    },
-  });
-});
 
 interface Props {
   viewId: number;
@@ -37,7 +22,6 @@ const BoardContent: React.FC = () => {
   //   return viewId;
   // };
 
-  const classes = useStyles();
   const handleAddButtonClicked = useRecoilCallback(
     ({ snapshot }) => async () => {
       const lists = await snapshot.getPromise(listState);
@@ -264,12 +248,12 @@ const BoardContent: React.FC = () => {
   };
 
   return (
-    <div className={classes.dragDropRoot}>
+    <div css={dragDropRoot}>
       <DragDropContext onDragEnd={handleDragEnded}>
         <Droppable droppableId={`${viewId}`} direction="horizontal" type="List">
           {(provided) => (
             <div
-              className={classes.container}
+              css={container}
               {...provided.droppableProps}
               ref={provided.innerRef}
             >
@@ -279,7 +263,7 @@ const BoardContent: React.FC = () => {
           )}
         </Droppable>
       </DragDropContext>
-      <div className={classes.addbuttonArea}>
+      <div css={addbuttonArea}>
         <Fab
           variant="extended"
           size="medium"
@@ -293,5 +277,18 @@ const BoardContent: React.FC = () => {
     </div>
   );
 };
+
+const dragDropRoot = css`
+  display: flex;
+`;
+
+const container = css`
+  display: flex;
+`;
+
+const addbuttonArea = css`
+  flex: 0 0 360px;
+  margin-top: 32px;
+`;
 
 export default BoardContent;

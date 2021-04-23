@@ -3,7 +3,7 @@ import TextField from "@material-ui/core/TextField";
 import Fab from "@material-ui/core/Fab";
 import CheckIcon from "@material-ui/icons/Check";
 import Typography from "@material-ui/core/Typography";
-import { createStyles, makeStyles } from "@material-ui/core/styles";
+import { css } from "@emotion/react";
 //import State from "../state";
 import { useRecoilState } from "recoil";
 import { listState } from "../state/model";
@@ -12,44 +12,8 @@ interface Props {
   listId: number;
 }
 
-const useStyles = makeStyles(() => {
-  return createStyles({
-    listTitleArea: {
-      display: "flex",
-      alignItems: "center",
-      marginTop: "8px",
-    },
-    listTitleForm: {
-      flexBasis: "80%",
-      marginLeft: "8px",
-    },
-    listTitleTextField: {
-      width: "100%",
-    },
-    listTitle: {
-      display: "flex",
-      alignItems: "center",
-      width: "100%",
-      minHeight: "72px",
-      padding: "0 16px",
-      cursor: "pointer",
-    },
-    listTitleTypography: {
-      overflow: "hidden",
-      textOverflow: "ellipsis",
-      whiteSpace: "nowrap",
-    },
-    editIconArea: {
-      flexBasis: "20%",
-      margin: "0 16px",
-      textAlign: "center",
-    },
-  });
-});
-
 const ListTitleArea: React.FC<Props> = (props) => {
   const { listId } = props;
-  const classes = useStyles();
 
   const [isInputArea, setIsInputArea] = useState(false);
   const [lists, setLists] = useRecoilState(listState);
@@ -86,11 +50,11 @@ const ListTitleArea: React.FC<Props> = (props) => {
   };
 
   return (
-    <div className={classes.listTitleArea}>
+    <div css={listTitleArea}>
       {isInputArea ? (
-        <div className={classes.listTitleForm}>
+        <div css={listTitleForm}>
           <TextField
-            className={classes.listTitleTextField}
+            css={listTitleTextField}
             id="list-name"
             label="List Title"
             value={title}
@@ -102,18 +66,14 @@ const ListTitleArea: React.FC<Props> = (props) => {
           />
         </div>
       ) : (
-        <div className={classes.listTitle} onClick={handleisInputAreaChange}>
-          <Typography
-            className={classes.listTitleTypography}
-            variant="h6"
-            gutterBottom
-          >
+        <div css={listTitle} onClick={handleisInputAreaChange}>
+          <Typography css={listTitleTypography} variant="h6" gutterBottom>
             {title || "The title is empty"}
           </Typography>
         </div>
       )}
       {isInputArea && (
-        <div className={classes.editIconArea}>
+        <div css={editIconArea}>
           <Fab
             variant="extended"
             size="medium"
@@ -128,5 +88,36 @@ const ListTitleArea: React.FC<Props> = (props) => {
     </div>
   );
 };
+
+const listTitleArea = css`
+  display: flex;
+  align-items: center;
+  margin-top: 8px;
+`;
+const listTitleForm = css`
+  flex-basis: 80%;
+  margin-left: 8px;
+`;
+const listTitleTextField = css`
+  width: 100%;
+`;
+const listTitle = css`
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-height: 72px;
+  padding: 0 16px;
+  cursor: pointer;
+`;
+const listTitleTypography = css`
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+const editIconArea = css`
+  flex-basis: 20%;
+  margin: 0 16px;
+  text-align: center;
+`;
 
 export default ListTitleArea;
